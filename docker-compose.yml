@@ -6,3 +6,27 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: til-clean-architecture-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - til_clean_architecture_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h localhost -u$${MYSQL_USER} -p$${MYSQL_PASSWORD}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  til_clean_architecture_mysql_data:
