@@ -2,3 +2,4 @@ fastapi==0.136.1
 uvicorn[standard]==0.48.0
 py-ulid==1.0.3  # ULID
 pre_commit==4.6.0
+passlib[bcrypt]==1.7.4
