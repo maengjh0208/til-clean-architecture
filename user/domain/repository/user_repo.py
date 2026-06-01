@@ -16,4 +16,3 @@ class IUserRepository(metaclass=ABCMeta):
         검색한 유저가 없을 경우 422 에러를 발생시킨다.
         """
         pass
-    
