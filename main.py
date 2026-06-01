@@ -3,6 +3,6 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-@app.get("/")
+@app.get("/healthcheck")
 def hello():
-    return {"Hello": "FastAPI"}
+    return {"status": "ok"}
