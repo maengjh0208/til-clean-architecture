@@ -39,3 +39,11 @@ class UserService:
         self.user_repo.save(user)
 
         return user
+
+    def get_user(self, email: str) -> User:
+        user = self.user_repo.find_by_email(email)
+
+        if not user:
+            raise HTTPException(status_code=404)
+
+        return user
