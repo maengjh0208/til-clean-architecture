@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from config import settings
 
 SQLALCHEMY_DATABASE_URL = (
-    f"mysql+mysqldb://{settings.MYSQL_USER}:{settings.MYSQL_PASSWORD}@127.0.0.1/{settings.MYSQL_DATABASE}"
+    f"mysql+mysqldb://{settings.MYSQL_USER}:{settings.MYSQL_PASSWORD}@db/{settings.MYSQL_DATABASE}"
 )
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 # 데이터베이스 세션과 관련 있음. 이 클래스의 객체가 생성되면 데이터베이스 세션이 생성됨.
