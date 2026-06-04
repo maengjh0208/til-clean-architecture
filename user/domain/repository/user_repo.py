@@ -32,3 +32,7 @@ class IUserRepository(metaclass=ABCMeta):
     @abstractmethod
     def get_users(self, session: Session, page: int, items_per_page: int) -> tuple[int, list[User]]:
         pass
+
+    @abstractmethod
+    def delete(self, session: Session, id: str) -> None:
+        pass

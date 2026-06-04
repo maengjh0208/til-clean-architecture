@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 
 from user.domain.repository.user_repo import IUserRepository
@@ -79,14 +79,11 @@ class UserRepository(IUserRepository):
         )
 
     def update_user(self, session: Session, user_vo: UserVO) -> None:
-        query = select(User).where(User.id == user_vo.id)
-        user = session.execute(query).scalar_one_or_none()
+        query = update(User).where(User.id == user_vo.id).values(name=user_vo.name, password=user_vo.password)
+        result = session.execute(query)
 
-        if not user:
+        if result.rowcount == 0:
             raise HTTPException(status_code=404)
-
-        user.name = user_vo.name
-        user.password = user_vo.password
 
     def get_users(self, session: Session, page: int, items_per_page: int) -> tuple[int, list[UserVO]]:
         query = select(func.count()).select_from(User)
@@ -122,3 +119,10 @@ class UserRepository(IUserRepository):
             )
             for user in users
         ]
+
+    def delete(self, session: Session, id: str) -> None:
+        query = delete(User).where(User.id == id)
+        result = session.execute(query)
+
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404)

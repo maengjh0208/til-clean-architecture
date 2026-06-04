@@ -69,3 +69,9 @@ class UserService:
         self.user_repo.update_user(session, user)
 
         return user
+
+    def delete_user(self, session: Session, user_id: str) -> None:
+        if not self.user_repo.find_by_id(session, user_id):
+            raise HTTPException(status_code=404)
+
+        self.user_repo.delete(session, user_id)
