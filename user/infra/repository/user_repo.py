@@ -87,11 +87,10 @@ class UserRepository(IUserRepository):
 
         user.name = user_vo.name
         user.password = user_vo.password
-        user.updated_at = user_vo.updated_at
 
     def get_users(self, session: Session, page: int, items_per_page: int) -> tuple[int, list[UserVO]]:
         query = select(func.count()).select_from(User)
-        total_count = session.execute(query).scalar()
+        total_count = session.execute(query).scalar() or 0
 
         offset = (page - 1) * items_per_page
 
