@@ -49,6 +49,11 @@ class UserService:
 
         return user
 
+    def get_users(self, page: int, items_per_page: int) -> tuple[int, list[User]]:
+        total_count, users = self.user_repo.get_users(page, items_per_page)
+
+        return total_count, users
+
     def update_user(self, user_id: str, name: str | None = None, password: str | None = None) -> User:
         user = self.user_repo.find_by_id(user_id)
 

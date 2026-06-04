@@ -50,6 +50,13 @@ class UserRouter:
 
         return user
 
+    # GET /users/list - 유저 목록 조회
+    @router.get("/list", status_code=200)
+    def get_users(self, page: int = 1, item_per_page: int = 10):
+        total_count, users = self.user_service.get_users(page, item_per_page)
+
+        return {"total_count": total_count, "page": page, "users": users}
+
     # PUT /users/{user_id} - 유저 정보 업데이트
     @router.put("/{user_id}", status_code=200)
     def update_user(self, user_id: str, user: UpdateUserBody):

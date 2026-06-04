@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from database import SessionLocal
 from user.domain.repository.user_repo import IUserRepository
@@ -95,3 +95,39 @@ class UserRepository(IUserRepository):
             user.updated_at = user_vo.updated_at
 
             db.commit()
+
+    def get_users(self, page: int, items_per_page: int) -> tuple[int, list[UserVO]]:
+        with SessionLocal() as db:
+            query = select(func.count()).select_from(User)
+            total_count = db.execute(query).scalar()
+
+            offset = (page - 1) * items_per_page
+
+            query = (
+                select(
+                    User.id,
+                    User.name,
+                    User.email,
+                    User.password,
+                    User.memo,
+                    User.created_at,
+                    User.updated_at,
+                )
+                .offset(offset)
+                .limit(items_per_page)
+            )
+
+            users = db.execute(query).all()
+
+            return total_count, [
+                UserVO(
+                    id=user.id,
+                    name=user.name,
+                    email=user.email,
+                    password=user.password,
+                    memo=user.memo,
+                    created_at=user.created_at,
+                    updated_at=user.updated_at,
+                )
+                for user in users
+            ]

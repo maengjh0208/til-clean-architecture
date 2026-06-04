@@ -24,3 +24,7 @@ class IUserRepository(metaclass=ABCMeta):
     @abstractmethod
     def update_user(self, user: User) -> None:
         pass
+
+    @abstractmethod
+    def get_users(self, page: int, items_per_page: int) -> tuple[int, list[User]]:
+        pass
