@@ -1,7 +1,12 @@
+from typing import Annotated
+
+from dependency_injector.wiring import Provide, inject
+from fastapi import Depends
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 from pydantic import BaseModel
 
+from containers import Container
 from user.application.user_service import UserService
 
 router = InferringRouter(prefix="/users")
@@ -15,8 +20,9 @@ class CreateUserBody(BaseModel):
 
 @cbv(router)
 class UserRouter:
-    def __init__(self):
-        self.user_service = UserService()
+    @inject
+    def __init__(self, user_service: Annotated[UserService, Depends(Provide[Container.user_service])]):
+        self.user_service = user_service
 
     # POST /users/ - 회원 등록
     @router.post("/", status_code=201)
