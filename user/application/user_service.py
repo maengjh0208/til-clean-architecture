@@ -1,5 +1,6 @@
 from dependency_injector.wiring import inject
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
 from ulid import ULID
 
 from user.domain.repository.user_repo import IUserRepository
@@ -18,11 +19,11 @@ class UserService:
         self.ulid = ULID()
         self.crypto = Crypto()
 
-    def create_user(self, name: str, email: str, password: str, memo: str | None = None) -> User:
+    def create_user(self, session: Session, name: str, email: str, password: str, memo: str | None = None) -> User:
         _user = None
 
         try:
-            _user = self.user_repo.find_by_email(email)
+            _user = self.user_repo.find_by_email(session, email)
         except HTTPException as e:
             if e.status_code != 422:
                 raise e
@@ -37,25 +38,25 @@ class UserService:
             password=self.crypto.encrypt(password),
             memo=memo,
         )
-        self.user_repo.save(user)
+        self.user_repo.save(session, user)
 
         return user
 
-    def get_user(self, email: str) -> User:
-        user = self.user_repo.find_by_email(email)
+    def get_user(self, session: Session, email: str) -> User:
+        user = self.user_repo.find_by_email(session, email)
 
         if not user:
             raise HTTPException(status_code=404)
 
         return user
 
-    def get_users(self, page: int, items_per_page: int) -> tuple[int, list[User]]:
-        total_count, users = self.user_repo.get_users(page, items_per_page)
+    def get_users(self, session: Session, page: int, items_per_page: int) -> tuple[int, list[User]]:
+        total_count, users = self.user_repo.get_users(session, page, items_per_page)
 
         return total_count, users
 
-    def update_user(self, user_id: str, name: str | None = None, password: str | None = None) -> User:
-        user = self.user_repo.find_by_id(user_id)
+    def update_user(self, session: Session, user_id: str, name: str | None = None, password: str | None = None) -> User:
+        user = self.user_repo.find_by_id(session, user_id)
 
         if not user:
             raise HTTPException(status_code=404)
@@ -65,6 +66,6 @@ class UserService:
         if password:
             user.password = self.crypto.encrypt(password)
 
-        self.user_repo.update_user(user)
+        self.user_repo.update_user(session, user)
 
         return user
