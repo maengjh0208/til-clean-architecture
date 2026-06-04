@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from dependency_injector.wiring import inject
 from fastapi import HTTPException
 from ulid import ULID
@@ -20,7 +18,7 @@ class UserService:
         self.ulid = ULID()
         self.crypto = Crypto()
 
-    def create_user(self, name: str, email: str, password: str) -> User:
+    def create_user(self, name: str, email: str, password: str, memo: str | None = None) -> User:
         _user = None
 
         try:
@@ -32,14 +30,12 @@ class UserService:
         if _user:
             raise HTTPException(status_code=422)
 
-        now = datetime.now()
         user: User = User(
             id=self.ulid.generate(),
             name=name,
             email=email,
             password=self.crypto.encrypt(password),
-            created_at=now,
-            updated_at=now,
+            memo=memo,
         )
         self.user_repo.save(user)
 
@@ -50,5 +46,20 @@ class UserService:
 
         if not user:
             raise HTTPException(status_code=404)
+
+        return user
+
+    def update_user(self, user_id: str, name: str | None = None, password: str | None = None) -> User:
+        user = self.user_repo.find_by_id(user_id)
+
+        if not user:
+            raise HTTPException(status_code=404)
+
+        if name:
+            user.name = name
+        if password:
+            user.password = self.crypto.encrypt(password)
+
+        self.user_repo.update_user(user)
 
         return user

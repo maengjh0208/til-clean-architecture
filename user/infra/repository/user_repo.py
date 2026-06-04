@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy import select
 
 from database import SessionLocal
@@ -13,21 +14,21 @@ class UserRepository(IUserRepository):
             name=user.name,
             email=user.email,
             password=user.password,
-            created_at=user.created_at,
-            updated_at=user.updated_at,
+            memo=user.memo,
         )
 
         with SessionLocal() as db:
             db.add(new_user)
             db.commit()
 
-    def find_by_email(self, email: str) -> UserVO:
+    def find_by_email(self, email: str) -> UserVO | None:
         with SessionLocal() as db:
             query = select(
                 User.id,
                 User.name,
                 User.email,
                 User.password,
+                User.memo,
                 User.created_at,
                 User.updated_at,
             ).where(User.email == email)
@@ -45,9 +46,52 @@ class UserRepository(IUserRepository):
                     name=user.name,
                     email=user.email,
                     password=user.password,
+                    memo=user.memo,
                     created_at=user.created_at,
                     updated_at=user.updated_at,
                 )
                 if user
                 else None
             )
+
+    def find_by_id(self, id: str) -> UserVO | None:
+        with SessionLocal() as db:
+            query = select(
+                User.id,
+                User.name,
+                User.email,
+                User.password,
+                User.memo,
+                User.created_at,
+                User.updated_at,
+            ).where(User.id == id)
+
+            user = db.execute(query).one_or_none()
+
+            return (
+                UserVO(
+                    id=user.id,
+                    name=user.name,
+                    email=user.email,
+                    password=user.password,
+                    memo=user.memo,
+                    created_at=user.created_at,
+                    updated_at=user.updated_at,
+                )
+                if user
+                else None
+            )
+
+    def update_user(self, user_vo: UserVO) -> None:
+        with SessionLocal() as db:
+            query = select(User).where(User.id == user_vo.id)
+            user = db.execute(query).scalar_one_or_none()
+
+            if not user:
+                raise HTTPException(status_code=404)
+
+            user.name = user_vo.name
+            user.password = user_vo.password
+            user.updated_at = user_vo.updated_at
+
+            db.commit()

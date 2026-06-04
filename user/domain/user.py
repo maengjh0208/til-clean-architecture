@@ -8,5 +8,6 @@ class User:
     name: str
     email: str
     password: str
-    created_at: datetime
-    updated_at: datetime
+    memo: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None

@@ -18,6 +18,11 @@ class CreateUserBody(BaseModel):
     password: str
 
 
+class UpdateUserBody(BaseModel):
+    name: str | None = None
+    password: str | None = None
+
+
 @cbv(router)
 class UserRouter:
     @inject
@@ -36,7 +41,7 @@ class UserRouter:
 
         return created_user
 
-    # GET /users/ - 회원 조회
+    # GET /users/ - 이메일로 회원 조회
     @router.get("/", status_code=200)
     def get_user(self, email: str):
         user = self.user_service.get_user(
@@ -44,3 +49,14 @@ class UserRouter:
         )
 
         return user
+
+    # PUT /users/{user_id} - 유저 정보 업데이트
+    @router.put("/{user_id}", status_code=200)
+    def update_user(self, user_id: str, user: UpdateUserBody):
+        updated_user = self.user_service.update_user(
+            user_id=user_id,
+            name=user.name,
+            password=user.password,
+        )
+
+        return updated_user
