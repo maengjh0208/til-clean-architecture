@@ -31,7 +31,7 @@ class UserService:
         if _user:
             raise HTTPException(status_code=422)
 
-        user: User = User(
+        user = User(
             id=self.ulid.generate(),
             name=name,
             email=email,
