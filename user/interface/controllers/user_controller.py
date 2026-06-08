@@ -8,6 +8,7 @@ from fastapi_utils.inferring_router import InferringRouter
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
 
+from common.auth import CurrentUser, get_admin_user, get_current_user
 from containers import Container
 from database import get_db
 from user.application.user_service import UserService
@@ -82,7 +83,11 @@ class UserRouter:
     # GET /users/list - 회원 목록 조회
     @router.get("/list", status_code=200, response_model=GetUsersResponse)
     def get_users(
-        self, session: Annotated[Session, Depends(get_db)], page: int = 1, items_per_page: int = 10
+        self,
+        session: Annotated[Session, Depends(get_db)],
+        current_user: Annotated[CurrentUser, Depends(get_admin_user)],
+        page: int = 1,
+        items_per_page: int = 10,
     ) -> GetUsersResponse:
         total_count, users = self.user_service.get_users(session=session, page=page, items_per_page=items_per_page)
 
@@ -99,22 +104,25 @@ class UserRouter:
             ],
         )
 
-    # PUT /users/{user_id} - 회원 정보 업데이트
-    @router.put("/{user_id}", status_code=200, response_model=UserResponse)
+    # PUT /users/ - 회원 정보 업데이트
+    @router.put("/", status_code=200, response_model=UserResponse)
     def update_user(
-        self, session: Annotated[Session, Depends(get_db)], user_id: str, user: UpdateUserBody
+        self,
+        session: Annotated[Session, Depends(get_db)],
+        current_user: Annotated[CurrentUser, Depends(get_current_user)],
+        body: UpdateUserBody,
     ) -> UserResponse:
-        updated_user = self.user_service.update_user(
+        user = self.user_service.update_user(
             session=session,
-            user_id=user_id,
-            name=user.name,
-            password=user.password,
+            user_id=current_user.id,
+            name=body.name,
+            password=body.password,
         )
 
         return UserResponse(
-            id=updated_user.id,
-            name=updated_user.name,
-            email=updated_user.email,
+            id=user.id,
+            name=user.name,
+            email=user.email,
         )
 
     # DELETE /users/{user_id} - 회원 탈퇴

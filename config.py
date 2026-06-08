@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     MYSQL_DATABASE: str
     MYSQL_USER: str
     MYSQL_PASSWORD: str
+    # Auth
+    SECRET_KEY: str
+    ALGORITHM: str
 
 
 settings = Settings()
