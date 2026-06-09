@@ -4,6 +4,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from database import SQLALCHEMY_DATABASE_URL, Base
+from note.infra.db_models.notes import Note, Tag  # noqa: F401
 from user.infra.db_models.users import User  # noqa: F401
 
 # this is the Alembic Config object, which provides

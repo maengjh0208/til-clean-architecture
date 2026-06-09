@@ -10,6 +10,8 @@ from jose import JWTError, jwt
 from config import settings
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="/users/login")
+ALGORITHM = settings.ALGORITHM
+SECRET_KEY = settings.SECRET_KEY
 
 
 class Role(StrEnum):
@@ -43,7 +45,7 @@ def create_access_token(payload: dict, role: Role, expires_date: timedelta = tim
             "exp": expire,
         }
     )
-    encoded_jwt = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    encoded_jwt = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
     return encoded_jwt
 
@@ -51,7 +53,7 @@ def create_access_token(payload: dict, role: Role, expires_date: timedelta = tim
 def decode_access_token(token: str) -> dict:
     try:
         # 검증 실패하면 JWTError, 성공하면 payload 를 반환
-        return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
