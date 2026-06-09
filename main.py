@@ -3,6 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from containers import Container
+from example.ch10_01.background_task import router as bg_router
 from note.interface.controllers.note_controller import router as note_rotuer
 from user.interface.controllers.user_controller import router as user_router
 
@@ -14,6 +15,7 @@ app.container = Container()
 
 app.include_router(user_router)
 app.include_router(note_rotuer)
+app.include_router(bg_router)
 
 
 # BaseModel 타입 검증 실패시 기본적으로 422 에러가 발생한다. 이거를 400 상태코드로 변경
