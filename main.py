@@ -6,6 +6,7 @@ from containers import Container
 from example.ch10_01.background_task import router as bg_router
 from example.ch11_01.context_sample import router as context_router
 from example.ch11_01.middleware import create_sample_middleware
+from middleware import create_middleware
 from note.interface.controllers.note_controller import router as note_rotuer
 from user.interface.controllers.user_controller import router as user_router
 
@@ -26,6 +27,7 @@ app.include_router(context_router)
 # main.py 에서 다음과 같이 미들웨어를 직접 연결할 수도 있다.
 # app.middleware("http")(add_process_time_header)
 create_sample_middleware(app)
+create_middleware(app)
 
 
 # BaseModel 타입 검증 실패시 기본적으로 422 에러가 발생한다. 이거를 400 상태코드로 변경

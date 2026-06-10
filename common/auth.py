@@ -24,6 +24,9 @@ class CurrentUser:
     id: str
     role: Role
 
+    def __str__(self):
+        return f"{self.id}({self.role})"
+
 
 # JWT 는 암호화(내용 숨김)가 아니라, 서명(위변조 방지) 이다.
 # JWT 구조는 3 부분으로 나뉜다.
