@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 
 from containers import Container
 from example.ch10_01.background_task import router as bg_router
+from example.ch11_01.context_sample import router as context_router
 from example.ch11_01.middleware import create_sample_middleware
 from note.interface.controllers.note_controller import router as note_rotuer
 from user.interface.controllers.user_controller import router as user_router
@@ -17,6 +18,7 @@ app.container = Container()
 app.include_router(user_router)
 app.include_router(note_rotuer)
 app.include_router(bg_router)
+app.include_router(context_router)
 
 # create_sample_middleware 함수를 따로 선언한 이유는 @app.middleware 데코레이터를 사용하기 위함인데,
 # app 객체가 선언되어 있는 main.py 가 아닌 모듈에서 이 데코레이터가 동작하지 않기 때문이다.

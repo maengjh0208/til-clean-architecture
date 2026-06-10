@@ -1,7 +1,7 @@
 # 미들웨어 테스트
 
 
-from datetime import time
+import time
 
 from fastapi import FastAPI, Request
 

@@ -14,3 +14,4 @@ dependency-injector==4.49.0  # IoC 컨테이너 제공
 pydantic[email]==2.13.4
 python-jose[cryptography]==3.3.0
 python-multipart==0.0.20
+requests==2.32.3
